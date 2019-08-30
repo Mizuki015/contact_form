@@ -1,10 +1,34 @@
 <?php
+
+// このページが表示された時の
+// 送信方法（GET　or　POST）の確認
+// GET送信の場合は、入力画面に遷移する
+
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    // このページを表示する際の送信がGETの場合
+    // index.htmlに遷移する
+    header('Location: index.html');
+}
+
+
+
+// function.phpを読み込んで
+// 定義した関数を使えるようにする
+require_once('functions.php');
+
+
 //スーパーグローバル変数
 //（phpがもともと用意している変数）
 
-$username = $_POST['username'];
-$email = $_POST['email'];
-$content = $_POST['content'];
+// 送信されてきた値の取得
+// エスケープ処理をして、
+// XSS（クロスサイトクリプティング）の対策をする
+
+// エスケープ処理：htmlspecialchars
+// htmlspecialchars（対象の文字、オプション、文字コード）
+$username = h($_POST['username']);
+$email = h($_POST['email']);
+$content = h($_POST['content']);
 
 // ユーザー名が空かチェック
 if ($username == '') {
@@ -41,10 +65,13 @@ if ($content == '') {
     <p>メールアドレス：<?php echo $emailResult; ?></p>
     <p>お問合わせ内容：<?php echo $contentResult; ?></p>
 
-    <form action="">
-        <button>戻る</button>
+    <form action="thanks.php" method='POST'>
+        <input type="hidden" name="username" value= <?php echo $usernameResult ?>>
+        <input type="hidden" name="email" value= <?php echo $emailResult ?>>
+        <input type="hidden" name="content" value= <?php echo $contentResult ?>>
+
+        <button type ="button" onclick="history.back();">戻る</button>
         <input type="submit" value="OK">
     </form>
-
 </body>
 </html>
